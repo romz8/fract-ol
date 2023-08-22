@@ -14,18 +14,11 @@
 
 int main(int argc, char *argv[])
 {
-    t_vars  *frame;
-    void    *set;
-    int     img_width;
-    int     img_height;
+    t_frame  *frame;
     
-    if (argc < 2)
+    if (argc < 1 ||  !argv[0]) //useless but no compile with -W -W- W
         return (1);
-    frame = init_graph(argv[1]);
-    set = mlx_xpm_file_to_image(frame->mlx, "./img/mandelbrot_set.xpm", &img_width, &img_height);
-    if (!set)
-        return(1);
-    mlx_put_image_to_window(frame->mlx, frame->windw, set, 0, 0);
+    frame = init_graph();
+    mandelbrot_draw(0, frame);
     graphic_maganement(frame);
 }
-

@@ -26,7 +26,7 @@ MLX_PATH = ./minilibx_opengl
 MLX_NAME = libmlx.a
 MLX = $(MLX_PATH)/$(MLX_NAME)
 
-NAME = minitest
+NAME = fractol
 
 all: $(MLX) $(NAME)
 
