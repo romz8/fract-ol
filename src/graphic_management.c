@@ -47,22 +47,6 @@ void   graphic_maganement(t_frame *vars)
 {
     mlx_hook(vars->windw, 2, 0, esc_handler, vars);
     mlx_hook(vars->windw, 17, 0, close_handler, vars);
+    mlx_mouse_hook(vars->windw, mouse_event, vars);
     mlx_loop(vars->mlx);
-}
-
-int  esc_handler(int keycode, t_frame *vars)
-{
-    if (keycode == ESC)
-    {
-        mlx_destroy_window(vars->mlx, vars->windw);
-        exit (0);
-    }
-    else
-        return (1);
-}
-
-int close_handler(t_frame *vars)
-{
-    mlx_destroy_window(vars->mlx, vars->windw);
-    exit (0);
 }

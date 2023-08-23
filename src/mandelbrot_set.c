@@ -17,15 +17,13 @@ void    complex_cartesian_mapping(t_frame *frame)
 {       
     t_fractal *set = malloc(sizeof(t_fractal));
     if (!set)
-        return ; //exit wrapping function here LATER ON
+        return ; //WARNING !!!!!!!! exit wrapping function here LATER ON
     set->MaxReal = 1;
     set->MinReal = -1.9;
     set->MinIm = -1.4;
-    set->MaxIm = set->MinIm + (set->MaxReal - set->MinReal) * ((double) HEIGHT/ (double) WIDTH);
-    set->Re_factor = (set->MaxReal - set->MinReal);
-    set->Im_factor = (set->MaxIm - set->MinIm);
+    set->MaxIm = set->MinIm + (set->MaxReal - set->MinReal) * HEIGHT/ WIDTH;
     color_range(frame, set);
-    frame->m_set = set;
+    frame->set = set;
 }
 
 int mandelbrot_set(double c_re, double c_im)
@@ -50,29 +48,28 @@ int mandelbrot_set(double c_re, double c_im)
     return (0);
 }
 
-void    mandelbrot_draw(int x, t_frame  *frame)
+void    mandelbrot_draw(t_frame  *frame)
 {
     double c_re;
     double c_im;
     int     y;
-    t_fractal *set;
+    int x;
     int     iteration;
 
-    complex_cartesian_mapping(frame);
-    set = frame->m_set;
+    x = 0;
     while (x < WIDTH)
     {
         
-        c_re = set->MinReal + ((double)x * set->Re_factor) / (double) WIDTH;
+        c_re = frame->set->MinReal + x * (frame->set->MaxReal - frame->set->MinReal) / WIDTH;
         y = 0;
         while (y < HEIGHT)
         {
-            c_im = set->MinIm + ((double)y * set->Im_factor) / (double) HEIGHT;
+            c_im = frame->set->MinIm + y * (frame->set->MaxIm - frame->set->MinIm)  / HEIGHT;
             iteration = mandelbrot_set(c_re, c_im);
-            if ( iteration == 0)
-                fill_pixel(frame->img, x, y, 0x00000000);
+            if (iteration == 0)
+                fill_pixel(frame->img, x , y, 0x00000000);
             else
-                fill_pixel(frame->img, x, y, frame->m_set->color_palette[iteration]);
+                fill_pixel(frame->img, x, y, frame->set->color_palette[iteration]);
             y++;
         }
         x++;

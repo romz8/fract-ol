@@ -17,15 +17,15 @@ based on 3 colors with a function to the color_palette in the fractal object
 void    color_range(t_frame *frame, t_fractal *f)
 {
     if (frame->color_setup == '1')
-        gradient_triple(f, 0x000000FF, 0x0000FFFF, 0x00FF00FF);
+        gradient_triple(f, 0x0022B573, 0x00FFFF66, 0x00FF6347);
     else if (frame->color_setup == '2')
-        gradient_triple(f, 0x00FF00D9, 0x0000FFFF, 0x0000FF00);
+        gradient_triple(f, 0x000000FF, 0x00FFFFFF, 0x00FF0000);
     else if (frame->color_setup == '3')
-        gradient_triple(f, 0x002BC0E8, 0x00F6CB66, 0x0063A75E);
+        gradient_triple(f, 0x009400D3, 0x004B0082, 0x0000FF00);
     else if (frame->color_setup == '4')
         gradient_triple(f, 0x00484498, 0x00F6CB66, 0x00a0ACB4);
     else
-        gradient_triple(f, 0x00006464, 0x00FF00FF, 0x00FF64FF);
+        gradient_triple(f, 0x0009111E, 0x00FFFFFF, 0x00C80815);
 }
 
 /*
