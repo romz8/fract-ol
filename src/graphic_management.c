@@ -12,7 +12,7 @@
 
 #include "../include/fractol.h"
 
-t_frame  *init_graph(void)
+t_frame  *init_graph(char **argv)
 {
     t_image  *img;
     t_frame *frame;
@@ -35,11 +35,11 @@ t_frame  *init_graph(void)
     if (!(img->image))
         return (NULL);
     img->addr = mlx_get_data_addr(img->image, &img->bits_per_pxl, &img->line_len, &img->endian);
-    printf("init image address is %p\n", img->addr);
-    printf("init bits per pxl is %i\n", img->bits_per_pxl);
     frame->mlx = mlx;
     frame->windw = windw;
     frame->img = img;
+    if (argv[1])
+        frame->color_setup = *argv[1]; // WARNING
     return (frame);
 }
 
@@ -52,7 +52,7 @@ void   graphic_maganement(t_frame *vars)
 
 int  esc_handler(int keycode, t_frame *vars)
 {
-    if (keycode == 53)
+    if (keycode == ESC)
     {
         mlx_destroy_window(vars->mlx, vars->windw);
         exit (0);

@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
     
     if (argc < 1 ||  !argv[0]) //useless but no compile with -W -W- W
         return (1);
-    frame = init_graph();
+    frame = init_graph(argv);
     mandelbrot_draw(0, frame);
     graphic_maganement(frame);
 }
