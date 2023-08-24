@@ -26,18 +26,25 @@ MLX_PATH = ./minilibx_opengl
 MLX_NAME = libmlx.a
 MLX = $(MLX_PATH)/$(MLX_NAME)
 
+LIBFT_PATH = ./libft
+LIBFT_NAME = libft.a
+LIBFT = $(LIBFT_PATH)/$(LIBFT_NAME)
+
 NAME = fractol
 
-all: $(MLX) $(NAME)
+all: $(MLX) $(LIBFT) $(NAME)
 
 $(MLX):
 	@echo "Building the MiniLibX"
 	@make -sC $(MLX_PATH) all
 	@cp $(MLX) .  
 
+$(LIBFT):
+	make -sC $(LIBFT_PATH) all
+
 -include $(DEPS)
 $(NAME): $(OBJS)
-	$(CC)  -o $(NAME) $(OBJS) $(GRAPH_LINKING)
+	$(CC) -o $(NAME) $(LIBFT) $(OBJS)  $(GRAPH_LINKING)
 
 $(OBJS_DIR):
 	mkdir $(OBJS_DIR)
@@ -47,9 +54,11 @@ $(OBJS_DIR)/%.o: src/%.c | $(OBJS_DIR)
 
 clean:
 	make -C $(MLX_PATH) clean
+	make -C $(LIBFT_PATH) clean
 	rm -rf $(OBJS_DIR)
 
 fclean: clean
+	make -C $(LIBFT_PATH) fclean
 	rm -rf $(NAME) $(MLX_NAME)
 
 re: fclean all

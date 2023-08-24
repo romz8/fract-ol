@@ -11,23 +11,55 @@
 /* ************************************************************************** */
 
 #include "../include/fractol.h"
-/* Based on user input stored in the frame, we allocate a color gradient 
+/* 
+Based on user input stored in the frame, we allocate a color gradient 
 based on 3 colors with a function to the color_palette in the fractal object
  */
 void    color_range(t_frame *frame, t_fractal *f)
 {
-    if (frame->color_setup == '1')
-        gradient_triple(f, 0x0022B573, 0x00FFFF66, 0x00FF6347);
+    int i;
+
+    i = 0;
+    while ( i < MAX_ITER)
+    {
+        if (frame->color_setup == 1)
+            f->color_palette[i] = create_trgb(0, 50, 100 + i* 5, i * 5);
+        else if (frame->color_setup == 2)
+            f->color_palette[i] = create_trgb(0, i * 5, 20, 20 + i * 5);
+        else if (frame->color_setup == 3)
+            f->color_palette[i] = create_trgb(0, 150 + i * 5, 0, i * 15);
+        else
+        {
+            f->color_palette[i] = create_trgb(0, 50 + i * 5, i * 5, 20);
+            frame->color_setup = 0;
+        }
+        i++;
+    }
+} /*
     else if (frame->color_setup == '2')
-        gradient_triple(f, 0x000000FF, 0x00FFFFFF, 0x00FF0000);
+        gradient_triple(f, 0x00006400, 0x00FF6400, 0x00FF64FF);
     else if (frame->color_setup == '3')
         gradient_triple(f, 0x009400D3, 0x004B0082, 0x0000FF00);
     else if (frame->color_setup == '4')
         gradient_triple(f, 0x00484498, 0x00F6CB66, 0x00a0ACB4);
     else
-        gradient_triple(f, 0x0009111E, 0x00FFFFFF, 0x00C80815);
+    {
+        rgb[0] = 0;
+        rgb[1] = 100;
+        rgb[2] = 100;
+        create_palette(frame->set, rgb, 1);
+    }
+    
+    {
+        i = 0;
+        while ( i < MAX_ITER)
+        {
+             f->color_palette[i] = create_trgb(0, i * 5, 25, 100 + i * 5);
+             i++;
+        }
+    }
 }
-
+*/
 /*
 We create a triple color gradient based on the hex colors input start, mid, end
 we use a 3 steps multi-strage : 
@@ -53,9 +85,9 @@ void    gradient_triple(t_fractal *f, int start, int mid, int end)
     {
         color_start = key_colors[j];
         color_end = key_colors[j + 1];
-        while (i < MAX_ITER / 2)
+        while (i < MAX_ITER / 3)
         {
-            f->color_palette[j *  (MAX_ITER / 2) + i] = lerp_interpolation(color_start, color_end, (float) i / (MAX_ITER / 2));
+            f->color_palette[j *  (MAX_ITER / 3) + i] = lerp_interpolation(color_start, color_end, (float) i / (MAX_ITER / 2));
             i++;
         }
         j++;
@@ -70,13 +102,15 @@ int	create_trgb(int t, int r, int g, int b)
     return (t << 24 | r << 16 | g << 8 | b);
 }
 
-/* creates a shade between 2 colors as an interpolation 
+/* 
+creates a shade between 2 colors as an interpolation 
 1. we take as input 2 colors (hex) and a fraction between [0, 1]
 2. convert each color to TRGB - lfeft bitshift to mask it with 255 (full byte)
 3. interpolate by returning the value in-between each R,G,B for  the 2 colors
     base on the fraction (it's like tracing a line and taking the point at distance
     equal to fraction)
-4. return the hex color corresponding */
+4. return the hex color corresponding 
+*/
 int lerp_interpolation(int color1, int color2, float fraction)
 {
     int trgb_start[4];
@@ -102,4 +136,26 @@ int lerp_interpolation(int color1, int color2, float fraction)
             trgb_inter[i] = 0;
     }
     return (create_trgb(trgb_inter[0], trgb_inter[1], trgb_inter[2], trgb_inter[3]));
+}
+
+void    create_palette(t_fractal *f, int *rgb, int fixed)
+{
+    int i;
+    int j; 
+    
+    if (!f)
+        return;
+    i = 0;
+    while ( i < MAX_ITER)
+    {
+        j = 0;
+        while (j < 3)
+        {
+            if (j != fixed && !(rgb[j] >= 255))
+                rgb[j] += 3;
+            j++;
+        }
+        f->color_palette[i] = create_trgb(0, rgb[0], rgb[1], rgb[2]);
+        i++;
+    }
 }

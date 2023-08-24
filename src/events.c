@@ -12,52 +12,60 @@
 
 #include "../include/fractol.h"
 
-/*take as parameter: 
+/*
+Take as parameter: 
     1. the key_code from the hook function passed from mouse_event function
-    2. Our frame object containing the window, the image, the fractal object
+    2. the mouse position on the grid (in pixel)
+    3. Our frame object containing the window, the image, the fractal object
     and the mlx pointer
-1. we re-scale our window ; we iniatilized it for the fractal set by framing 
-our pxl grid to a complex plan where x-axis are reals and y- axix are Imaginary 
-coordinate. we re-scale it for zooming by going into more details  (i.e : 
-having the same nber of pixel on the axis but that represents smaller values :
-we are going down in scale - ex : before 1080 pxl represented values from 
--1 to 1, now it's -0.5 to 0.5 : we increased details))
-2. we need to direct that zoom : 
-    2.a if the user clicked somewhere, we saved the corresponding complex 
-    number coordinates to the fractal object, we keep that point of focus
-    2.b. if the user never clicked (yet) - we assign the centre of the cmplex
-    plane as the poit of focus
-3. Now we zoom : we re-scale our screen around our point of fous :
-the new min for x-axis is going toward our point of focus by half the
-new window size / conversely for the y-axis with new imaginary axis values
-4. We can now render again our fractal set, with new complex plan on same number 
-of pixel (i.e same nber of details for same nber of complex points but on part
-of complex plane that contains all the smaller values)
+1. we calculate the length of our axis on our complex plan by taking the 
+(max - min) difference for both real and imaginary part -> the idea is to reduce 
+this axis value range (in our complex plan) for the same nber of pxl on our 
+screen: i.e. : zooming = more details = having the same nber of pixel on the 
+axis but that represents smaller values
+2. we re-scale our mouse position (x, y) from pixel grid to our complex grid : 
+we factor our x (pixel width) to our real_axis by starting at the min_real and 
+then add the distance x * axis_size / WIDTH ; this like applying a ratio of
+conversion from pixel to complex plan. we do the same for y and imaginary axis. 
+that gives us a focal point in the complex plan from our mouse position.
+3. we re-scale our window ; we iniatilized it for the fractal set by framing 
+our pxl grid to a complex plan where x-axis are reals and y-axis are Imaginary 
+coordinate. We now re-scale it around our focal point: 
+
+Example with real_axis(x) : 
+we calculate the distance between the previous min and the focal point and 
+divide it by the zoom (to have a smaller axis on the same nbr of pixels) - 
+similarly we calculate the distance betwn the pvious max and our focal point. 
+our new min and max for reals (x) will be our focal point - / + this distance. 
+we do the same for the imaginary (y) axis with minIm and maxIm.
+
+4. We re-render our fractal but this time on smaller complex planm, centered 
+around our focal point - but for the same nber of pxl on our screen.
 */
-int zoom_in(int key_code, t_frame *frame)
+
+int zoom(int key_code, double x, double y, t_frame *frame)
 {
     t_fractal *f;
-    double newWidth;
-    double newHeight;
+    double axis_Width;
+    double axis_Height;
+    double  zoom;
 
-    if (key_code != WHEEL_UP)
+
+    if (key_code == WHEEL_UP)
+        zoom = ZOOM;
+    else if (key_code == WHEEL_DOWN)
+        zoom = 1 / ZOOM;
+    else
         return (1);
     f = frame->set;  
-    newWidth = (f->MaxReal - f->MinReal) / ZOOM;
-    newHeight = (f->MaxIm - f->MinIm) / ZOOM;
-    if (!f->cntr_re || !f->cntr_re)
-    {
-        f->cntr_re = (f->MaxReal + f->MinReal) / 2.0;
-        f->cntr_im = (f->MaxIm + f->MinIm) / 2.0;
-    }
-
-    f->MinReal = f->cntr_re - newWidth / 2.0;
-    f->MaxReal = f->cntr_re + newWidth / 2.0;
-    f->MinIm = f->cntr_im - newHeight / 2.0;
-    f->MaxIm = f->cntr_im + newHeight / 2.0;
-
-    // PUT SOME INTERPOLATION TO SMOOTHEN THE ZOOM
-    
+    axis_Width = (f->MaxReal - f->MinReal);
+    axis_Height = (f->MaxIm - f->MinIm);
+    f->cntr_re = f->MinReal + (double) x * axis_Width / WIDTH;
+    f->cntr_im = f->MinIm + (double) y * axis_Height / HEIGHT;
+	f->MinReal = f->cntr_re - (fabs(f->MinReal - f->cntr_re) / zoom);
+	f->MinIm = f->cntr_im - (fabs(f->MinIm- f->cntr_im) / zoom);
+	f->MaxIm = f->cntr_im + (fabs(f->MaxIm - f->cntr_im) / zoom);
+	f->MaxReal = f->cntr_re + (fabs(f->MaxReal - f->cntr_re) / zoom);
     mandelbrot_draw(frame);
     return (0);
 }
@@ -87,16 +95,45 @@ plan and save it to our fractal object to direct "recursive" zoom
 */
 int mouse_event(int key_code, int x, int y, t_frame *frame)
 {
-    t_fractal *f;
-
-    f = frame->set;
     if (key_code == LEFT_CLICK)
     {
-        f->cntr_re = f->MinReal + (double) x * (f->MaxReal - f->MinReal) / WIDTH;
-        f->cntr_im = f->MinIm + (double) y * (f->MaxIm - f->MinIm) / HEIGHT;
-        return (0);
+        
+        frame->color_setup += 1;
+        frame->color_setup %= 4;
+        color_range(frame, frame->set);
+        mandelbrot_draw(frame);
     }
-    zoom_in(key_code, frame);
+    zoom(key_code, (double) x, (double)y, frame);
     return (1);
 }
 
+int keyboard_events(int keycode, t_frame *frame)
+{
+    if (keycode == ARROW_UP)
+        move(frame, 0, -1);
+    else if (keycode == ARROW_DOWN)
+        move(frame, 0, +1);
+    else if (keycode == ARROW_LEFT)
+        move(frame, -1, 0);
+    else if (keycode == ARROW_RIGHT)
+        move (frame, +1, 0);
+    return (0);   
+}
+
+void    move(t_frame *frame, double x, double y)
+{
+    t_fractal *f;
+    double  distance_Re;
+    double  distance_Im;
+
+    if (!frame)
+        return;
+    f = frame->set;
+    distance_Re = (f->MaxReal - f->MinReal);
+    distance_Im =  (f->MaxIm - f->MinIm);
+    f->MaxReal += distance_Re * x * 0.03;
+    f->MinReal += distance_Re * x * 0.03;
+    f->MaxIm += distance_Im * y * 0.03;
+    f->MinIm += distance_Im * y * 0.03;
+    mandelbrot_draw(frame);
+}

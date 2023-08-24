@@ -39,7 +39,7 @@ t_frame  *init_graph(char **argv)
     frame->windw = windw;
     frame->img = img;
     if (argv[1])
-        frame->color_setup = *argv[1]; // WARNING
+        frame->color_setup = ft_atoi(argv[1]); // WARNING
     return (frame);
 }
 
@@ -48,5 +48,6 @@ void   graphic_maganement(t_frame *vars)
     mlx_hook(vars->windw, 2, 0, esc_handler, vars);
     mlx_hook(vars->windw, 17, 0, close_handler, vars);
     mlx_mouse_hook(vars->windw, mouse_event, vars);
+    mlx_key_hook(vars->windw, keyboard_events,vars);
     mlx_loop(vars->mlx);
 }
