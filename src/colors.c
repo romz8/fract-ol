@@ -15,7 +15,7 @@
 Based on user input stored in the frame, we allocate a color gradient 
 based on 3 colors with a function to the color_palette in the fractal object
  */
-void    color_range(t_frame *frame, t_fractal *f)
+void    color_range(t_frame *frame)
 {
     int i;
 
@@ -23,14 +23,14 @@ void    color_range(t_frame *frame, t_fractal *f)
     while ( i < MAX_ITER)
     {
         if (frame->color_setup == 1)
-            f->color_palette[i] = create_trgb(0, 50, 100 + i* 5, i * 5);
+            frame->color_palette[i] = create_trgb(0, 50, 100 + i* 5, i * 5);
         else if (frame->color_setup == 2)
-            f->color_palette[i] = create_trgb(0, i * 5, 20, 20 + i * 5);
+            frame->color_palette[i] = create_trgb(0, i * 5, 20, 20 + i * 5);
         else if (frame->color_setup == 3)
-            f->color_palette[i] = create_trgb(0, 150 + i * 5, 0, i * 15);
+            frame->color_palette[i] = create_trgb(0, 150 + i * 5, 0, i * 15);
         else
         {
-            f->color_palette[i] = create_trgb(0, 50 + i * 5, i * 5, 20);
+            frame->color_palette[i] = create_trgb(0, 50 + i * 5, i * 5, 20);
             frame->color_setup = 0;
         }
         i++;
@@ -68,7 +68,7 @@ we use a 3 steps multi-strage :
 and mid, then  50 shades of colors between mid and end
 3. we interpolate between each colors as MAX_ITER / nb of segment 
 */
-void    gradient_triple(t_fractal *f, int start, int mid, int end)
+void    gradient_triple(t_frame *f, int start, int mid, int end)
 {
     int i;
     int j;

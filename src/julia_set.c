@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 #include "../include/fractol.h"
-int julia_set(t_fractal *f, double c_re, double c_im)
+int julia_set(t_frame *f, double c_re, double c_im)
 {
     int n;
     double  z_re;
@@ -35,7 +35,7 @@ int julia_set(t_fractal *f, double c_re, double c_im)
     return (-1);
 }
 
-void julia_setup(t_fractal *f, double c[2])
+void julia_setup(t_frame *f, double c[2])
 {
     if (f->julia_type == 1)
     {

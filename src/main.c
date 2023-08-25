@@ -13,57 +13,53 @@
 #include "../include/fractol.h"
 void    fractal_setup(t_frame *frame, char **argv)
 {
-    t_fractal   *set;
 
-    if (!argv[1] || argv[1][0] == '\0')
-        fractol_exit(frame); // provide function for bad mem and not input isssue
-    set = malloc(sizeof(t_fractal));
-    if (!set)
-        fractol_exit(frame); // provide function for bad mem and not input isssue
     if (ft_strncmp(argv[1], "Mandelbrot",10) == 0)
-    {
-        printf("THIS LINE OK\n");
-        set->type = 1;
-        printf("THIS LINE OK\n");
-    }
+        frame->type = 1;
     else if (ft_strncmp(argv[1], "Julia",5) == 0)
-        set->type = 2;
+        frame->type = 2;
+    else if (ft_strncmp(argv[1], "BurningShip",5) == 0)
+        frame->type = 3;
     else
-        fractol_exit(frame);
-    if (set->type == 2)
+        fractol_exit(&frame);
+    if (frame->type == 2)
     {   
-        if (argv[3] && (ft_strncmp(argv[3], "1", 1) || ft_strncmp(argv[3], "2", 1)))
-            set->julia_type = ft_atoi(argv[3]);
+        if (argv[3] && (ft_strncmp(argv[3], "1", 1) || 
+        ft_strncmp(argv[3], "2", 1) || ft_strncmp(argv[3], "3", 1)))
+            frame->julia_type = ft_atoi(argv[3]);
         else
-            fractol_exit(frame);
+            fractol_exit(&frame);
     }
-    frame->set = set;
     return ;
 }
 
-void fractol_exit(t_frame *frame)
+void fractol_exit(t_frame **frame)
 {
-    ft_putstr_fd("please enter the following argumant\n", STDOUT_FILENO);
-    ft_putstr_fd("./fractol ['Mandelbrot','Julia']\n", STDOUT_FILENO);
-    if (frame->img)
-        free(frame->img);
-    if (frame->set)
-        free(frame->set);
-    if (frame)
-        free(frame);
+    args_exit();
+    if (!*frame)
+        return ;
+    if ((*frame)->image)
+        mlx_destroy_image((*frame)->mlx, (*frame)->image);
+    if ((*frame)->windw)
+        mlx_destroy_window((*frame)->mlx, (*frame)->windw);
     exit(0);
-    //mlx_destroy_window(frame->mlx, frame->windw);
 }
 
 int main(int argc, char *argv[])
 {
-    t_frame  *frame;
+    t_frame  frame;
     
-    if (argc < 1 ||  !argv[0]) //useless but no compile with -W -W- W
+    if (argc < 2 || !argv[1] || argv[1][0] == '\0')
+    {
+        args_exit();
         return (1);
-    
-    frame = init_graph(argv);
-    complex_plan(frame);
-    render_fractal(frame, 0);
-    graphic_maganement(frame);
+    }
+    init_graph(argv, &frame);
+    complex_plan(&frame);
+    render_fractal(&frame, 0);
+    mlx_hook(frame.windw, 2, 0, esc_handler, &frame);
+    mlx_hook(frame.windw, 17, 0, close_handler, &frame);
+    mlx_mouse_hook(frame.windw, mouse_event, &frame);
+    mlx_key_hook(frame.windw, keyboard_events, &frame);
+    mlx_loop(frame.mlx);
 }

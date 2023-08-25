@@ -38,17 +38,21 @@
 # include "../minilibx_opengl/mlx.h"
 # include "../libft/libft.h"
 
-typedef struct s_image {
+typedef struct s_fractal
+{  
+
+} t_fractal;
+
+typedef struct s_frame
+{
+    void    *mlx;
+    void    *windw;
     void    *image;
     char    *addr;
     int     bits_per_pxl;
     int     line_len;
     int     endian;
-}   t_image;
-
-typedef struct s_fractal
-{
-    
+    int     color_setup;
     int     type;
     double MaxReal;
     double MinReal;
@@ -58,39 +62,28 @@ typedef struct s_fractal
     double cntr_im;
     int     julia_type;
     int     color_palette[80];
-} t_fractal;
-
-typedef struct s_frame
-{
-    void    *mlx;
-    void    *windw;
-    double x_click;
-    double y_click;
-    t_image  *img;
-    t_fractal *set;
-    int     color_setup;
 }   t_frame;
 
-t_frame *init_graph(char **argv);
-void    graphic_maganement(t_frame *vars);
+void    init_graph(char **argv, t_frame *frame);
+void    args_exit(void);
 int     esc_handler(int keycode, t_frame *vars);
 int     close_handler(t_frame *vars);
 void    complex_plan(t_frame *frame);
 int     mandelbrot_set(double c_re, double c_im);
 void    render_fractal(t_frame  *frame, int iteration);
-void    fill_pixel(t_image *data, int x, int y, int color);
+void    fill_pixel(t_frame *frame, int x, int y, int color);
 int     create_trgb(int t, int r, int g, int b);
-void    gradient_triple(t_fractal *f, int start, int mid, int end);
+void    gradient_triple(t_frame *f, int start, int mid, int end);
 int     lerp_interpolation(int color1, int color2, float fraction);
-void    color_range(t_frame *frame, t_fractal *f);
+void    color_range(t_frame *frame);
 int     zoom(int key_code, double x, double y, t_frame *frame);
 int     mouse_event(int key_code, int x, int y, t_frame *frame);
-void    create_palette(t_fractal *frame, int *rgb, int fixed);
 int     keyboard_events(int keycode, t_frame *frame);
 void    move(t_frame *frame, double x, double y);
-void    fractol_exit(t_frame *frame);
+void    fractol_exit(t_frame **frame);
 void    fractal_setup(t_frame *frame, char **argv);
-int     julia_set( t_fractal *f, double c_re, double c_im);
-void julia_setup(t_fractal *f, double c[2]);
+int     julia_set( t_frame *f, double c_re, double c_im);
+void    julia_setup(t_frame *f, double c[2]);
+int     burningship_set(double c_re, double c_im);
 
 #endif

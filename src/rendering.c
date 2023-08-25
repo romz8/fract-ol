@@ -14,10 +14,12 @@
 
 int fractal_set(t_frame *frame, double c_re, double c_im)
 {
-    if (frame->set->type == 1)
+    if (frame->type == 1)
         return (mandelbrot_set(c_re, c_im));
-    else //(frame->set->type == 2)
-        return (julia_set(frame->set, c_re, c_im));
+    else if (frame->type == 2)
+        return (julia_set(frame, c_re, c_im));
+    else //if (frame->set->type == 3)
+        return (burningship_set(c_re, c_im));
 }
 
 void    render_fractal(t_frame  *frame, int iteration)
@@ -31,30 +33,30 @@ void    render_fractal(t_frame  *frame, int iteration)
     while (x < WIDTH)
     {
         
-        c_re = frame->set->MinReal + x * (frame->set->MaxReal - frame->set->MinReal) / WIDTH;
+        c_re = frame->MinReal + x * (frame->MaxReal - frame->MinReal) / WIDTH;
         y = 0;
         while (y < HEIGHT)
         {
-            c_im = frame->set->MinIm + y * (frame->set->MaxIm - frame->set->MinIm)  / HEIGHT;
+            c_im = frame->MinIm + y * (frame->MaxIm - frame->MinIm)  / HEIGHT;
             iteration = fractal_set(frame, c_re, c_im);
             if (iteration == -1)
-                fill_pixel(frame->img, x , y, 0x00000000);
+                fill_pixel(frame, x , y, 0x00000000);
             else
-                fill_pixel(frame->img, x, y, frame->set->color_palette[iteration]);
+                fill_pixel(frame, x, y, frame->color_palette[iteration]);
             y++;
         }
         x++;
     }
-    mlx_put_image_to_window(frame->mlx, frame->windw, frame->img->image, 0, 0);
+    mlx_put_image_to_window(frame->mlx, frame->windw, frame->image, 0, 0);
 }
 
-void    fill_pixel(t_image *data, int x, int y, int color)
+void    fill_pixel(t_frame *frame, int x, int y, int color)
 {
     char    *dst;
 
-    if (!data)
+    if (!frame)
         return ;
-    dst = data->addr + (y * data->line_len + x * (data->bits_per_pxl / 8));
+    dst = frame->addr + (y * frame->line_len + x * (frame->bits_per_pxl / 8));
     *(unsigned int *) dst = color;
 }
 
@@ -88,21 +90,18 @@ we do the same for the imaginary (y) axis with minIm and maxIm.
 4. We re-render our fractal but this time on smaller complex planm, centered 
 around our focal point - but for the same nber of pxl on our screen.
 */
-int zoom(int key_code, double x, double y, t_frame *frame)
+int zoom(int key_code, double x, double y, t_frame *f)
 {
-    t_fractal *f;
     double axis_Width;
     double axis_Height;
     double  zoom;
-
 
     if (key_code == WHEEL_UP)
         zoom = ZOOM;
     else if (key_code == WHEEL_DOWN)
         zoom = 1 / ZOOM;
     else
-        return (1);
-    f = frame->set;  
+        return (1); 
     axis_Width = (f->MaxReal - f->MinReal);
     axis_Height = (f->MaxIm - f->MinIm);
     f->cntr_re = f->MinReal + (double) x * axis_Width / WIDTH;
@@ -111,6 +110,6 @@ int zoom(int key_code, double x, double y, t_frame *frame)
 	f->MinIm = f->cntr_im - (fabs(f->MinIm- f->cntr_im) / zoom);
 	f->MaxIm = f->cntr_im + (fabs(f->MaxIm - f->cntr_im) / zoom);
 	f->MaxReal = f->cntr_re + (fabs(f->MaxReal - f->cntr_re) / zoom);
-    render_fractal(frame, 0);
+    render_fractal(f, 0);
     return (0);
 }

@@ -42,7 +42,7 @@ int mouse_event(int key_code, int x, int y, t_frame *frame)
         
         frame->color_setup += 1;
         frame->color_setup %= 4;
-        color_range(frame, frame->set);
+        color_range(frame);
         render_fractal(frame, 0);
     }
     zoom(key_code, (double) x, (double)y, frame);
@@ -62,20 +62,18 @@ int keyboard_events(int keycode, t_frame *frame)
     return (0);   
 }
 
-void    move(t_frame *frame, double x, double y)
+void    move(t_frame *f, double x, double y)
 {
-    t_fractal *f;
     double  distance_Re;
     double  distance_Im;
 
-    if (!frame)
+    if (!f)
         return;
-    f = frame->set;
     distance_Re = (f->MaxReal - f->MinReal);
     distance_Im =  (f->MaxIm - f->MinIm);
     f->MaxReal += distance_Re * x * 0.03;
     f->MinReal += distance_Re * x * 0.03;
     f->MaxIm += distance_Im * y * 0.03;
     f->MinIm += distance_Im * y * 0.03;
-    render_fractal(frame, 0);
+    render_fractal(f, 0);
 }
