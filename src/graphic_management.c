@@ -16,8 +16,6 @@ t_frame  *init_graph(char **argv)
 {
     t_image  *img;
     t_frame *frame;
-    void    *mlx;
-    void    *windw;
 
     frame = malloc(sizeof(t_frame));
     if (!frame)
@@ -25,21 +23,23 @@ t_frame  *init_graph(char **argv)
     img = malloc(sizeof(t_image));
     if (!img)
         return (NULL);
-    mlx = mlx_init();
-    if (!mlx)
+    frame->mlx = mlx_init();
+    if (!frame->mlx)
         return (NULL);
-    windw = mlx_new_window(mlx, WIDTH, HEIGHT, "fractol");
-    if (!windw)
+    frame->windw = mlx_new_window(frame->mlx, WIDTH, HEIGHT, "fractol");
+    if (!frame->windw)
         return (NULL);
-    img->image = mlx_new_image(mlx, WIDTH, HEIGHT);
+    img->image = mlx_new_image(frame->mlx, WIDTH, HEIGHT);
     if (!(img->image))
         return (NULL);
     img->addr = mlx_get_data_addr(img->image, &img->bits_per_pxl, &img->line_len, &img->endian);
-    frame->mlx = mlx;
-    frame->windw = windw;
     frame->img = img;
-    if (argv[1])
-        frame->color_setup = ft_atoi(argv[1]); // WARNING
+    if (argv[2])
+        frame->color_setup = ft_atoi(argv[2]); // WARNING
+    
+    fractal_setup(frame, argv);
+    printf("OK HERE : fracctal setup\n");
+    printf("set up is %i\n", frame->set->type);
     return (frame);
 }
 

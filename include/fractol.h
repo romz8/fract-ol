@@ -48,12 +48,15 @@ typedef struct s_image {
 
 typedef struct s_fractal
 {
+    
+    int     type;
     double MaxReal;
     double MinReal;
     double MinIm;
     double MaxIm;
     double cntr_re;
     double cntr_im;
+    int     julia_type;
     int     color_palette[80];
 } t_fractal;
 
@@ -72,9 +75,9 @@ t_frame *init_graph(char **argv);
 void    graphic_maganement(t_frame *vars);
 int     esc_handler(int keycode, t_frame *vars);
 int     close_handler(t_frame *vars);
-void    complex_cartesian_mapping(t_frame *frame);
+void    complex_plan(t_frame *frame);
 int     mandelbrot_set(double c_re, double c_im);
-void    mandelbrot_draw(t_frame *frame);
+void    render_fractal(t_frame  *frame, int iteration);
 void    fill_pixel(t_image *data, int x, int y, int color);
 int     create_trgb(int t, int r, int g, int b);
 void    gradient_triple(t_fractal *f, int start, int mid, int end);
@@ -85,5 +88,9 @@ int     mouse_event(int key_code, int x, int y, t_frame *frame);
 void    create_palette(t_fractal *frame, int *rgb, int fixed);
 int     keyboard_events(int keycode, t_frame *frame);
 void    move(t_frame *frame, double x, double y);
+void    fractol_exit(t_frame *frame);
+void    fractal_setup(t_frame *frame, char **argv);
+int     julia_set( t_fractal *f, double c_re, double c_im);
+void julia_setup(t_fractal *f, double c[2]);
 
 #endif

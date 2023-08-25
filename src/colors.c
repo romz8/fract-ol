@@ -137,25 +137,3 @@ int lerp_interpolation(int color1, int color2, float fraction)
     }
     return (create_trgb(trgb_inter[0], trgb_inter[1], trgb_inter[2], trgb_inter[3]));
 }
-
-void    create_palette(t_fractal *f, int *rgb, int fixed)
-{
-    int i;
-    int j; 
-    
-    if (!f)
-        return;
-    i = 0;
-    while ( i < MAX_ITER)
-    {
-        j = 0;
-        while (j < 3)
-        {
-            if (j != fixed && !(rgb[j] >= 255))
-                rgb[j] += 3;
-            j++;
-        }
-        f->color_palette[i] = create_trgb(0, rgb[0], rgb[1], rgb[2]);
-        i++;
-    }
-}
