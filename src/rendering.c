@@ -6,58 +6,58 @@
 /*   By: rjobert <rjobert@student.42barcelo>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/24 20:59:39 by rjobert           #+#    #+#             */
-/*   Updated: 2023/08/24 20:59:42 by rjobert          ###   ########.fr       */
+/*   Updated: 2023/08/28 14:07:25 by rjobert          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/fractol.h"
 
-int fractal_set(t_frame *frame, double c_re, double c_im)
+int	fractal_set(t_frame *frame, double c_re, double c_im)
 {
-    if (frame->type == 1)
-        return (mandelbrot_set(c_re, c_im));
-    else if (frame->type == 2)
-        return (julia_set(frame, c_re, c_im));
-    else //if (frame->set->type == 3)
-        return (burningship_set(c_re, c_im));
+	if (frame->type == 1)
+		return (mandelbrot_set(c_re, c_im));
+	else if (frame->type == 2)
+		return (julia_set(frame, c_re, c_im));
+	else
+		return (burningship_set(c_re, c_im));
 }
 
-void    render_fractal(t_frame  *frame, int iteration)
+void	render_fractal(t_frame *frame, int iteration)
 {
-    double c_re;
-    double c_im;
-    int     y;
-    int     x;
+	double	c_re;
+	double	c_im;
+	int		y;
+	int		x;
 
-    x = 0;
-    while (x < WIDTH)
-    {
-        
-        c_re = frame->MinReal + x * (frame->MaxReal - frame->MinReal) / WIDTH;
-        y = 0;
-        while (y < HEIGHT)
-        {
-            c_im = frame->MinIm + y * (frame->MaxIm - frame->MinIm)  / HEIGHT;
-            iteration = fractal_set(frame, c_re, c_im);
-            if (iteration == -1)
-                fill_pixel(frame, x , y, 0x00000000);
-            else
-                fill_pixel(frame, x, y, frame->color_palette[iteration]);
-            y++;
-        }
-        x++;
-    }
-    mlx_put_image_to_window(frame->mlx, frame->windw, frame->image, 0, 0);
+	x = 0;
+	while (x < WIDTH)
+	{
+		c_re = frame->min_re + x * (frame->max_re - frame->min_re) / WIDTH;
+		y = 0;
+		while (y < HEIGHT)
+		{
+			c_im = frame->min_im + y * (frame->max_im - frame->min_im) 
+				/ HEIGHT;
+			iteration = fractal_set(frame, c_re, c_im);
+			if (iteration == -1)
+				fill_pixel(frame, x, y, 0x00000000);
+			else
+				fill_pixel(frame, x, y, frame->color_palette[iteration]);
+			y++;
+		}
+		x++;
+	}
+	mlx_put_image_to_window(frame->mlx, frame->windw, frame->image, 0, 0);
 }
 
-void    fill_pixel(t_frame *frame, int x, int y, int color)
+void	fill_pixel(t_frame *frame, int x, int y, int color)
 {
-    char    *dst;
+	char	*dst;
 
-    if (!frame)
-        return ;
-    dst = frame->addr + (y * frame->line_len + x * (frame->bits_per_pxl / 8));
-    *(unsigned int *) dst = color;
+	if (!frame)
+		return ;
+	dst = frame->addr + (y * frame->line_len + x * (frame->bits_per_pxl / 8));
+	*(unsigned int *) dst = color;
 }
 
 /*
@@ -90,26 +90,26 @@ we do the same for the imaginary (y) axis with minIm and maxIm.
 4. We re-render our fractal but this time on smaller complex planm, centered 
 around our focal point - but for the same nber of pxl on our screen.
 */
-int zoom(int key_code, double x, double y, t_frame *f)
+int	zoom(int key_code, double x, double y, t_frame *f)
 {
-    double axis_Width;
-    double axis_Height;
-    double  zoom;
+	double	axis_width;
+	double	axis_height;
+	double	zoom;
 
-    if (key_code == WHEEL_UP)
-        zoom = ZOOM;
-    else if (key_code == WHEEL_DOWN)
-        zoom = 1 / ZOOM;
-    else
-        return (1); 
-    axis_Width = (f->MaxReal - f->MinReal);
-    axis_Height = (f->MaxIm - f->MinIm);
-    f->cntr_re = f->MinReal + (double) x * axis_Width / WIDTH;
-    f->cntr_im = f->MinIm + (double) y * axis_Height / HEIGHT;
-	f->MinReal = f->cntr_re - (fabs(f->MinReal - f->cntr_re) / zoom);
-	f->MinIm = f->cntr_im - (fabs(f->MinIm- f->cntr_im) / zoom);
-	f->MaxIm = f->cntr_im + (fabs(f->MaxIm - f->cntr_im) / zoom);
-	f->MaxReal = f->cntr_re + (fabs(f->MaxReal - f->cntr_re) / zoom);
-    render_fractal(f, 0);
-    return (0);
+	if (key_code == WHEEL_UP)
+		zoom = ZOOM;
+	else if (key_code == WHEEL_DOWN)
+		zoom = 1 / ZOOM;
+	else
+		return (1); 
+	axis_width = (f->max_re - f->min_re);
+	axis_height = (f->max_im - f->min_im);
+	f->cntr_re = f->min_re + (double) x * axis_width / WIDTH;
+	f->cntr_im = f->min_im + (double) y * axis_height / HEIGHT;
+	f->min_re = f->cntr_re - (fabs(f->min_re - f->cntr_re) / zoom);
+	f->min_im = f->cntr_im - (fabs(f->min_im - f->cntr_im) / zoom);
+	f->max_im = f->cntr_im + (fabs(f->max_im - f->cntr_im) / zoom);
+	f->max_re = f->cntr_re + (fabs(f->max_re - f->cntr_re) / zoom);
+	render_fractal(f, 0);
+	return (0);
 }
