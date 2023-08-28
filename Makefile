@@ -17,7 +17,7 @@ GRAPH_COMPILE = -Imlx
 GRAPH_LINKING = -L. -lmlx -framework OpenGL -framework Appkit
 
 
-SRC = $(wildcard ./src/*.c)
+SRC = colors.c events.c init.c julia_set.c main.c mandelbrot_set.c rendering.c
 OBJS_DIR = objs
 OBJS = $(addprefix $(OBJS_DIR)/, $(notdir $(SRC:.c=.o)))
 DEPS =$(addprefix $(OBJS_DIR)/, $(notdir $(SRC:.c=.d)))

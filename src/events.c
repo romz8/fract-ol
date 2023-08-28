@@ -37,11 +37,11 @@ plan and save it to our fractal object to direct "recursive" zoom
 */
 int mouse_event(int key_code, int x, int y, t_frame *frame)
 {
-    if (key_code == LEFT_CLICK)
+    if (key_code == RIGHT_CLICK)
     {
         
         frame->color_setup += 1;
-        frame->color_setup %= 4;
+        frame->color_setup %= 5;
         color_range(frame);
         render_fractal(frame, 0);
     }

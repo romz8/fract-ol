@@ -20,10 +20,10 @@
 #  define HEIGHT 1080
 # endif
 # define MAX_ITER 80
-# define ZOOM 1.3
+# define ZOOM 1.1
 
 # define ESC 53
-# define LEFT_CLICK 1
+# define RIGHT_CLICK 2
 # define WHEEL_UP 5
 # define WHEEL_DOWN 4
 # define ARROW_UP 126
@@ -38,11 +38,6 @@
 # include "../minilibx_opengl/mlx.h"
 # include "../libft/libft.h"
 
-typedef struct s_fractal
-{  
-
-} t_fractal;
-
 typedef struct s_frame
 {
     void    *mlx;
@@ -54,6 +49,7 @@ typedef struct s_frame
     int     endian;
     int     color_setup;
     int     type;
+    int     frame_init;
     double MaxReal;
     double MinReal;
     double MinIm;
@@ -85,5 +81,6 @@ void    fractal_setup(t_frame *frame, char **argv);
 int     julia_set( t_frame *f, double c_re, double c_im);
 void    julia_setup(t_frame *f, double c[2]);
 int     burningship_set(double c_re, double c_im);
+void    fractol_commandes(void);
 
 #endif

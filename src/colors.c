@@ -35,31 +35,8 @@ void    color_range(t_frame *frame)
         }
         i++;
     }
-} /*
-    else if (frame->color_setup == '2')
-        gradient_triple(f, 0x00006400, 0x00FF6400, 0x00FF64FF);
-    else if (frame->color_setup == '3')
-        gradient_triple(f, 0x009400D3, 0x004B0082, 0x0000FF00);
-    else if (frame->color_setup == '4')
-        gradient_triple(f, 0x00484498, 0x00F6CB66, 0x00a0ACB4);
-    else
-    {
-        rgb[0] = 0;
-        rgb[1] = 100;
-        rgb[2] = 100;
-        create_palette(frame->set, rgb, 1);
-    }
-    
-    {
-        i = 0;
-        while ( i < MAX_ITER)
-        {
-             f->color_palette[i] = create_trgb(0, i * 5, 25, 100 + i * 5);
-             i++;
-        }
-    }
-}
-*/
+} 
+
 /*
 We create a triple color gradient based on the hex colors input start, mid, end
 we use a 3 steps multi-strage : 

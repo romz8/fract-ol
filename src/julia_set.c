@@ -57,5 +57,7 @@ void julia_setup(t_frame *f, double c[2])
         c[0] = 1 - 1.618;
         c[1] = 0;
     }
+    else
+        fractol_exit(&f);
     /* PUT A ELSE WITH EXIT_FRACTOL IF NO CASE LATER*/
 }
