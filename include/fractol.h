@@ -20,7 +20,7 @@
 #  define HEIGHT 1080
 # endif
 # define MAX_ITER 80
-# define ZOOM 1.1
+# define ZOOM 1.1618
 
 # define ESC 53
 # define RIGHT_CLICK 2

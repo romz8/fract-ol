@@ -12,13 +12,25 @@
 
 #include "../include/fractol.h"
 
+/* 
+input : frame object and args from program
+objective : 
+1. check that user input after exec name is the correct fractal set, 
+if not, exit correctly and tell the commands to enter. 
+2.For Julia set if ask  as well to enter a 4th character (betwween 1 and 4) 
+to chose a Julia set based on pre-defined complex point. it implies that a 3rd 
+character (color set up) is chosen meanwhile it is optional for Mandelbrot or 
+BurningShip
+CAREFULL : needs to use strncmp with nb_character + 1 to compare up until 
+the '\0' char
+*/
 void	fractal_setup(t_frame *frame, char **argv)
 {
-	if (ft_strncmp(argv[1], "Mandelbrot", 10) == 0)
+	if (ft_strncmp(argv[1], "Mandelbrot", 11) == 0)
 		frame->type = 1;
-	else if (ft_strncmp(argv[1], "Julia", 5) == 0)
+	else if (ft_strncmp(argv[1], "Julia", 6) == 0)
 		frame->type = 2;
-	else if (ft_strncmp(argv[1], "BurningShip", 11) == 0)
+	else if (ft_strncmp(argv[1], "BurningShip", 12) == 0)
 		frame->type = 3;
 	else
 		fractol_exit(&frame);
@@ -65,6 +77,16 @@ void	fractol_commandes(void)
 		STDOUT_FILENO); 
 }
 
+/*
+1. We check if the program includes arguments and not null one for 
+the fractal set, else we exit correctly
+2. we set our frame object / struct as not initialized (useful to clean 
+and exit without freeing non-malloc memory) and then initialized our 
+fractal and our frame / graph
+3. set up a complex plan for our fractal calculation vs our pixel grid
+4. render our fractal and print command on terminal for user
+5. create hooks for corresponding events and handler functions
+*/
 int	main(int argc, char *argv[])
 {
 	t_frame	frame;
